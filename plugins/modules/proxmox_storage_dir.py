@@ -194,9 +194,7 @@ def main():
 
     module = AnsibleModule(
         argument_spec=module_args,
-        required_if=[
-            ('state', 'present', ('path'))
-        ],
+        required_if=[('state', 'present', ['path'])],
         supports_check_mode=True
     )
 
