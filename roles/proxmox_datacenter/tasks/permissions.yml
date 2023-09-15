@@ -1,0 +1,51 @@
+---
+- name: Permissions | Create groups.
+  cloudcodger.proxmox_openssh.proxmox_group:
+    api_host: "{{ loop_api_host }}"
+    api_user: "{{ proxmox_api_user }}"
+    group: "{{ item }}"
+    state: present
+  loop: "{{ datacenter_groups }}"
+
+- name: Permissions | Create Datacenter Permissions Users.
+  cloudcodger.proxmox_openssh.proxmox_user:
+    api_host: "{{ loop_api_host }}"
+    api_user: "{{ proxmox_api_user }}"
+    userid: "{{ item }}"
+    groups: "{{ omit if not datacenter_users_groups
+      else datacenter_users_groups | join(', ') }}"
+    state: present
+  loop: "{{ datacenter_users }}"
+
+- name: Permissions | Create Datacenter API Tokens.
+  cloudcodger.proxmox_openssh.proxmox_token:
+    api_host: "{{ loop_api_host }}"
+    api_user: "{{ proxmox_api_user }}"
+    userid: "{{ item.split('!') | first }}"
+    tokenid: "{{ item.split('!') | last }}"
+    state: present
+  register: tokens
+  loop: "{{ datacenter_tokens }}"
+
+- name: Store new tokens in secrets file.
+  ansible.builtin.copy:
+    content: "{{ item.token }}\n"
+    dest: "{{ local_token_secrets_dir }}/{{ local_token_secret_name_prefix
+      }}{{ item.userid | replace('@', '-') }}-{{ item.tokenid
+      }}{{ '-' + loop_api_host if proxmox_api_host is not string
+      }}{{ local_token_secret_name_suffix }}.token"
+    mode: "0600"
+  loop: "{{ tokens.results }}"
+  loop_control:
+    label: "{{ item.userid }}!{{ item.tokenid }}"
+  when: item.changed # noqa: no-handler
+
+- name: Permissions | Create ACLs.
+  cloudcodger.proxmox_openssh.proxmox_acl:
+    api_host: "{{ loop_api_host }}"
+    api_user: "{{ proxmox_api_user }}"
+    path: '/'
+    roleid: 'Administrator'
+    groups: "{{ ','.join(datacenter_groups) }}"
+    tokens: "{{ ','.join(datacenter_tokens) }}"
+    state: present

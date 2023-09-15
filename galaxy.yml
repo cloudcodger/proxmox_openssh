@@ -1,0 +1,20 @@
+---
+namespace: cloudcodger
+name: proxmox_openssh
+version: 1.0.0
+readme: README.md
+authors:
+  - Cloud Codger <cloudcodger@pm.me>
+
+description: Proxmox Cluster via openssh
+
+license:
+  - GPL-2.0-or-later
+
+tags: ['cluster', 'hypervisor', 'infrastructure', 'proxmox', 'pve', 'virtualization']
+dependencies: {}
+repository: https://github.com/cloudcodger/proxmox_openssh
+documentation: https://github.com/cloudcodger/proxmox_openssh
+homepage: https://github.com/cloudcodger/proxmox_openssh
+issues: https://github.com/cloudcodger/proxmox_openssh/issues
+build_ignore: []

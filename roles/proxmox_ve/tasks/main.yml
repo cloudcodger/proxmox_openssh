@@ -1,0 +1,110 @@
+---
+# tasks file for proxmox_ve
+
+- name: Include clustering tasks.
+  ansible.builtin.include_tasks: cluster.yml
+  when: create_cluster
+
+- name: APT | Update PVE enterprise apt repository.
+  ansible.builtin.apt_repository:
+    filename: "pve-enterprise"
+    repo: "deb {{ pve_apt_enterprise_url
+      }} {{ ansible_facts.distribution_release
+      }} pve-enterprise"
+    state: "{{ enterprise_license | ternary('present', 'absent') }}"
+    update_cache: false
+
+- name: APT | Update PVE no-subscription apt repository.
+  ansible.builtin.apt_repository:
+    filename: "pve-no-subscription"
+    repo: "deb {{ pve_apt_no_sub_url }} {{
+      ansible_facts.distribution_release }} pve-no-subscription"
+    state: "{{ enterprise_license | ternary('absent', 'present') }}"
+    update_cache: false
+
+- name: APT | Update Ceph enterprise apt repository.
+  ansible.builtin.apt_repository:
+    filename: ceph
+    repo: "deb {{ pve_apt_ceph_enterprise_url }} {{
+      ansible_facts.distribution_release }} enterprise"
+    state: "{{ enterprise_license | ternary('present', 'absent') }}"
+    update_cache: false
+
+- name: APT | Update Ceph no-subscription apt repository.
+  ansible.builtin.apt_repository:
+    filename: ceph
+    repo: "deb {{ pve_apt_ceph_no_sub_url }} {{
+      ansible_facts.distribution_release }} no-subscription"
+    state: "{{ enterprise_license | ternary('absent', 'present') }}"
+    update_cache: false
+
+# Add and remove the authorized_keys for access to the hosts
+# These differ from the 'root' account authorized_keys needed for clustering.
+- name: Add authorized_keys for root user.
+  ansible.posix.authorized_key:
+    user: 'root'
+    key: "{{ item }}"
+    state: present
+  loop: "{{ proxmox_host_authorized_keys }}"
+  # When clustered - Only needed on one system,
+  # as these get synced to all hosts
+  run_once: "{{ create_cluster }}"
+
+- name: Remove de-authorized_keys for root user.
+  ansible.posix.authorized_key:
+    user: 'root'
+    key: "{{ item }}"
+    state: absent
+  loop: "{{ proxmox_host_deauthorized_keys }}"
+  # When clustered - Only needed on one system,
+  # as these get synced to all hosts
+  run_once: "{{ create_cluster }}"
+
+# Install Cloud-Init images for use with `community.general.proxmox_kvm`.
+- name: Make sure the images/00 directory exists for Cloud-Init images.
+  ansible.builtin.file:
+    path: "/var/lib/vz/images/00"
+    mode: "0755"
+    group: "root"
+    owner: "root"
+    state: "directory"
+
+- name: Upload Cloud-Init disk image to proxmox server.
+  ansible.builtin.copy:
+    dest: "/var/lib/vz/images/00/{{ item }}"
+    src: "{{ item }}"
+    mode: "0600"
+    group: "root"
+    owner: "root"
+  loop: "{{ cloud_init_image_files }}"
+
+- name: Touch ansible proxmox_ve has run file.
+  ansible.builtin.file:
+    access_time: preserve
+    mode: "0600"
+    modification_time: preserve
+    path: "/root/.ansible/proxmox_ve.first.run"
+    state: touch
+  register: proxmox_ve_fist_run
+
+- name: Perform a dist-upgrade.
+  ansible.builtin.apt:
+    upgrade: "dist"
+    update_cache: true
+  when: proxmox_ve_fist_run.changed # noqa: no-handler
+
+- name: Check if a reboot is required.
+  ansible.builtin.stat:
+    path: "/var/run/reboot-required"
+    get_md5: false
+  register: reboot_required_file
+
+- name: Reboot the server (if required).
+  ansible.builtin.reboot:
+  when:
+    - reboot_required_file.stat.exists
+    - proxmox_ve_fist_run.changed # noqa: no-handler
+
+- name: Remove dependencies that are no longer required.
+  ansible.builtin.apt:
+    autoremove: true

@@ -1,0 +1,34 @@
+---
+# tasks file for proxmox_datacenter
+
+- name: Create the token secrets directory.
+  ansible.builtin.file:
+    path: "{{ local_token_secrets_dir }}"
+    state: directory
+    mode: '0700'
+  when: datacenter_tokens
+
+- name: Update "local" storage to allow images content.
+  cloudcodger.proxmox_openssh.proxmox_storage_dir:
+    api_host: "{{ item }}"
+    api_user: "{{ proxmox_api_user }}"
+    content: "images,iso,vztmpl,backup"
+    path: "/var/lib/vz"
+    storageid: "local"
+  loop: "{{ [proxmox_api_host] | flatten }}"
+
+- name: Create "configs" storage to allow images content.
+  cloudcodger.proxmox_openssh.proxmox_storage_dir:
+    api_host: "{{ item }}"
+    api_user: "{{ proxmox_api_user }}"
+    content: "snippets"
+    path: "/etc/pve/configs"
+    shared: true
+    storageid: "configs"
+  loop: "{{ [proxmox_api_host] | flatten }}"
+
+- name: Include permissions tasks.
+  ansible.builtin.include_tasks: permissions.yml
+  loop: "{{ [proxmox_api_host] | flatten }}"
+  loop_control:
+    loop_var: loop_api_host
