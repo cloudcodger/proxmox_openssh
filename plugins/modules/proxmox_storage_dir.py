@@ -196,7 +196,7 @@ def main():
         argument_spec=module_args,
         required_if=[
             ('state', 'present', ('path'))
-        ]
+        ],
         supports_check_mode=True
     )
 
