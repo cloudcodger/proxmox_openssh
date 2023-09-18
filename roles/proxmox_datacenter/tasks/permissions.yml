@@ -38,7 +38,7 @@
   loop: "{{ tokens.results }}"
   loop_control:
     label: "{{ item.userid }}!{{ item.tokenid }}"
-  when: item.changed # noqa: no-handler
+  when: item.changed  # noqa: no-handler
 
 - name: Permissions | Create ACLs.
   cloudcodger.proxmox_openssh.proxmox_acl:

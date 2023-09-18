@@ -145,13 +145,17 @@ class ProxmoxOpenSSHStorageDirectoryAnsible(ProxmoxOpenSSHAnsible):
         :param shared: bool - mark the storage as shared
         :return: None
         """
+        changed = False
+
         if self.exists(storageid):
             storage_item = self.get(storageid)
             if content is not None and not set(storage_item['content']) == set(content):
                 self.proxmox_api.storage(storageid).set(content=content)
-                return
-            if storage_item['shared'] | bool != shared:
+                changed = True
+            if 'shared' not in storage_item or storage_item['shared'] != int(shared):
                 self.proxmox_api.storage(storageid).set(shared=shared)
+                changed = True
+            if changed:
                 return
             self.module.exit_json(changed=False, storage_id=storageid, storage_content=content, msg="Storage {0} exists".format(storageid))
 

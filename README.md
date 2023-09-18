@@ -1,8 +1,11 @@
 # Ansible Collection - cloudcodger.proxmox_openssh
 
-This collection contains a set of roles and modules for managing servers with [Proxmox Virtual Environment](https://www.proxmox.com/en/proxmox-virtual-environment/overview) installed that helps get them configured from initial install to a state for real world use.
+This collection contains a set of roles and modules for managing servers with
+[Proxmox Virtual Environment](https://www.proxmox.com/en/proxmox-virtual-environment/overview)
+installed that helps get them configured from initial install to a state for real world use.
 
 Including:
+
 - configured for no-subscription use (APT repository changes)
 - installing the latest patches, and reboot if required
 - clustering hosts together
@@ -16,17 +19,17 @@ When using either the [`community.general.proxmox_kvm`](https://docs.ansible.com
 
 # Roles
 
-Two roles are provided to configure the Proxmox VE host systems as described. Because some tasks are performed on the individual host systems and others are performed on `localhost` using the [Proxmox API](https://pve.proxmox.com/pve-docs/api-viewer/) via the `proxmoxer` Python module, a playbook for configuring Proxmox hosts needs to have two plays. The first runs on all hosts and the second runs on `localhost` (See the example playbook section).
+Two roles are provided to configure the Proxmox VE host systems as described. Because some tasks are performed on the individual host systems and others are performed on `localhost` using the [Proxmox API](https://pve.proxmox.com/pve-docs/api-viewer/) via the `proxmoxer` Python module, a playbook for configuring Proxmox hosts needs to have two plays. The first runs on inventory hosts and the second runs on `localhost` (See the example playbook section).
 
 ## `proxmox_ve`
 
-Called on all hosts that have Proxmox VE installed on them. Configures the clustering, APT repositories, directory for cloud-init images, uploads images, and reboots when appropriate.
+Called on inventory hosts that have Proxmox VE installed on them. Configures the clustering, APT repositories, directory for cloud-init images, uploads images, and reboots when appropriate.
 
 ## `proxmox_datacenter`
 
-Called on `localhost` and users the `proxmoxer` Python module abd its `openssh` backend to connect to one or more hosts to configure the groups, users, API tokens and permissions ACLs.
+Called on `localhost` and uses the `proxmoxer` Python module and its `openssh` backend to connect to one or more hosts to configure the groups, users, API tokens and permissions ACLs.
 
-This module makes use of the various Ansible modules in the collection to perform these tasks with the exception of clustering. The Proxmox CLI command `pvecm` supports the ability to join cluster nodes via SSH but this ability was not found in the Proxmox API calls. So this configuration is performed using the CLI commands to avoid having to deal with `root` user passwords in the calls.
+This role makes use of the various Ansible modules in the collection to perform these tasks with the exception of clustering. The Proxmox CLI command `pvecm` supports the ability to join cluster nodes via SSH but this ability was not found in the Proxmox API calls. So this configuration is performed using the CLI commands to avoid having to deal with `root` user passwords in the calls.
 
 # Modules
 
@@ -75,3 +78,36 @@ As shown here, the playbook needs two plays. One that runs on the inventory host
       local_token_secret_name_prefix: "cluster-"
       local_token_secret_name_suffix: "-dev"
 ```
+
+# Proxmox Virtualization And Cloud-Init
+
+Items in this collection are designed to make it easier to use the Cloud-Init capability built into Proxmox.
+
+When starting with Proxmox the common starting approach is to do something like this in the UI.
+
+- Find an ISO image for the desired OS and download it
+- Upload that ISO to a storage location in Proxmox
+- Create a VM and attach the ISO as a virtual CD/DVD
+- Boot the VM (from the ISO as the disk is empty at this point)
+- Connect to the Console
+- Go through the normal installation process as you would with a physical system
+
+This quickly becomes tedeous and repetative. And next usually comes learning how to `clone` VMs.
+Which leads to learning how to turn a VM into a template and create clones from templates.
+Using a template with the "Linked Clone" may be the fastest way to create a virtual machine but introduces some restrictions and you will not be able to remove the template until all linked clones have been removed first.
+This is a fantastic way to quickly create a VM for a short test that will be destroyed right afterwards.
+Working with clones also requires changing a lot of values inside the OS of the new VM after it has been cloned and it is easy to overlook updating one that will later causes problems.
+
+Here is where you learn to create VMs using a [Cloud-Init](https://cloudinit.readthedocs.io/en/latest/) image that was specifically created to allow cloud providers to configure virtual machines using multiple init scripts.
+
+This collection sets up a Proxmox installation with items for Cloud-Init.
+In the first play it the creates `images/00` under the default `local` storage on each Proxmox VE host and
+uploads all the `cloud_init_image_files` listed into that directory.
+In the second play, the `images` content type (not included by default) is added to the `local` storage.
+
+Another directory type storage item called `configs` is also created, set for `snippets` content and with the path `/etc/pve/configs`.
+The entire `/etc/pve` directory is syncronized between all the hosts in a Proxmox Cluster.
+This provides a nice place to put any custom Cloud-Init User Config YAML files.
+Making sure that the config files exist on all hosts in the cluster as required for VM migration.
+
+**CAUTION:** Regarding the `configs` storage! Do to limitations in Corosync on the number of files and their sizes, only use this for small snippet files. Like the Cloud-Init user data configuration files mentioned above.
