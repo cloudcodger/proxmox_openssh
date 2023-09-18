@@ -113,11 +113,11 @@ msg:
 '''
 
 import re
-# from ansible_collections.community.general.plugins.module_utils.proxmox import (ansible_to_proxmox_bool, proxmox_to_ansible_bool)
 from ansible.module_utils.basic import AnsibleModule
 from ansible_collections.cloudcodger.proxmox_openssh.plugins.module_utils.proxmox_openssh import (ProxmoxOpenSSHAnsible, proxmox_openssh_argument_spec)
 
 class ProxmoxOpenSSHACLAnsible(ProxmoxOpenSSHAnsible):
+
     def all_exist(self, path, roleid, **kwargs):
         """
         Check if all the ACLs for a path and roleid for specified groups, tokens, and users exist
@@ -156,21 +156,21 @@ class ProxmoxOpenSSHACLAnsible(ProxmoxOpenSSHAnsible):
             if not matching_groups:
                 return False
             for ugid in re.split(r'[, ]+', kwargs['groups']):
-                if not ugid in matching_groups:
+                if ugid not in matching_groups:
                     return False
-                
+
         if 'tokens' in kwargs and kwargs['tokens']:
             if not matching_tokens:
                 return False
             for ugid in re.split(r'[, ]+', kwargs['tokens']):
-                if not ugid in matching_tokens:
+                if ugid not in matching_tokens:
                     return False
 
         if 'users' in kwargs and kwargs['users']:
             if not matching_users:
                 return False
             for ugid in re.split(r'[, ]+', kwargs['users']):
-                if not ugid in matching_users:
+                if ugid not in matching_users:
                     return False
 
         return True
@@ -303,6 +303,7 @@ class ProxmoxOpenSSHACLAnsible(ProxmoxOpenSSHAnsible):
             self.module.fail_json(msg="Failed to delete ACLs for {0}: {1}".format(removing, e))
 
 def main():
+
     module_args = proxmox_openssh_argument_spec()
     acl_args = dict(
         path=dict(type="str", required=True),
@@ -330,18 +331,19 @@ def main():
 
     if state == 'present':
         proxmox_acl.create(path, roleid,
-                           groups = module.params['groups'],
-                           tokens = module.params['tokens'],
-                           users = module.params['users'],
-                           propagate = module.params['propagate'])
+                           groups=module.params['groups'],
+                           tokens=module.params['tokens'],
+                           users=module.params['users'],
+                           propagate=module.params['propagate'])
         module.exit_json(changed=True, acl_path=path, roleid=roleid, msg="ACLs for path {0} and roleid {1} successfully created".format(path, roleid))
     else:
         # TBD: see if 'propagate' can be added. It is currently ignored when checking for ACLs to be removed.
         removed_acls = proxmox_acl.delete(path, roleid,
-                           groups = module.params['groups'],
-                           tokens = module.params['tokens'],
-                           users = module.params['users'])
+                           groups=module.params['groups'],
+                           tokens=module.params['tokens'],
+                           users=module.params['users'])
         module.exit_json(changed=True, removed_acls=removed_acls, msg="ACLs for path {0} and roleid {1} successfully deleted".format(path, roleid))
 
 if __name__ == '__main__':
+
     main()

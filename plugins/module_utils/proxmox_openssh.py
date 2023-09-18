@@ -9,8 +9,7 @@ __metaclass__ = type
 
 import traceback
 
-from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.community.general.plugins.module_utils.proxmox import (ProxmoxAnsible, ansible_to_proxmox_bool, proxmox_to_ansible_bool)
+from ansible_collections.community.general.plugins.module_utils.proxmox import (ProxmoxAnsible)
 
 PROXMOXER_IMP_ERR = None
 try:
@@ -21,6 +20,7 @@ except ImportError:
     PROXMOXER_IMP_ERR = traceback.format_exc()
 
 def proxmox_openssh_argument_spec():
+
     return dict(
         api_host=dict(type='str',
                       required=True
@@ -33,6 +33,7 @@ def proxmox_openssh_argument_spec():
 # Extending the ProxmoxAnsible class and override _connect so that proxmoxer uses openssh backend
 # instead of the default, https backend
 class ProxmoxOpenSSHAnsible(ProxmoxAnsible):
+
     def _connect(self):
         api_host = self.module.params['api_host']
         api_user = self.module.params['api_user']

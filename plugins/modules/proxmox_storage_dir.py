@@ -104,13 +104,11 @@ msg:
     sample: "Storage {name} successfully created"
 '''
 
-import traceback
-
-# from ansible_collections.community.general.plugins.module_utils.proxmox import (ansible_to_proxmox_bool, proxmox_to_ansible_bool)
 from ansible.module_utils.basic import AnsibleModule
 from ansible_collections.cloudcodger.proxmox_openssh.plugins.module_utils.proxmox_openssh import (ProxmoxOpenSSHAnsible, proxmox_openssh_argument_spec)
 
 class ProxmoxOpenSSHStorageDirectoryAnsible(ProxmoxOpenSSHAnsible):
+
     def get(self, storageid):
         """
         Get directory type storage info
@@ -186,6 +184,7 @@ class ProxmoxOpenSSHStorageDirectoryAnsible(ProxmoxOpenSSHAnsible):
             self.module.fail_json(msg="Failed to delete directory type storage with ID {0}: {1}".format(storageid, e))
 
 def main():
+
     module_args = proxmox_openssh_argument_spec()
     storage_args = dict(
         storageid=dict(type='str', aliases=['storage', 'name'], required=True),
@@ -217,4 +216,5 @@ def main():
         module.exit_json(changed=True, storage_id=storageid, msg="Storage {0} successfully deleted".format(storageid))
 
 if __name__ == '__main__':
+
     main()

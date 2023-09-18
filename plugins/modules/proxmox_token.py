@@ -103,11 +103,11 @@ msg:
     sample: "Token ansible!devops@pve successfully created"
 '''
 
-# from ansible_collections.community.general.plugins.module_utils.proxmox import (ansible_to_proxmox_bool, proxmox_to_ansible_bool)
 from ansible.module_utils.basic import AnsibleModule
 from ansible_collections.cloudcodger.proxmox_openssh.plugins.module_utils.proxmox_openssh import (ProxmoxOpenSSHAnsible, proxmox_openssh_argument_spec)
 
 class ProxmoxOpenSSHTokenAnsible(ProxmoxOpenSSHAnsible):
+
     def get(self, tokenid, userid):
         """
         Get user-specific token info
@@ -131,10 +131,9 @@ class ProxmoxOpenSSHTokenAnsible(ProxmoxOpenSSHAnsible):
         """
         for user in self.get_users():
             if user['userid'] == userid:
-              for token in self.proxmox_api.access.users(userid).token.get():
-                  if token['tokenid'] == tokenid:
-                      # self.module.exit_json(changed=False, token=token['tokenid'])
-                      return True
+                for token in self.proxmox_api.access.users(userid).token.get():
+                    if token['tokenid'] == tokenid:
+                        return True
         return False
 
     def create(self, tokenid, userid, comment=None, privsep=True, expire=0):
@@ -180,9 +179,10 @@ class ProxmoxOpenSSHTokenAnsible(ProxmoxOpenSSHAnsible):
         try:
             self.proxmox_api.access.users(userid).token(tokenid).delete()
         except Exception as e:
-            self.module.fail_json(msg="Failed to delete token {0} for user with ID {1}: {1}".format(tokenid, userid, e))
+            self.module.fail_json(msg="Failed to delete token {0} for user with ID {1}: {2}".format(tokenid, userid, e))
 
 def main():
+
     module_args = proxmox_openssh_argument_spec()
     token_args = dict(
         tokenid=dict(type='str', aliases=['token', 'name'], required=True),
@@ -208,11 +208,17 @@ def main():
     state = module.params['state']
 
     if state == 'present':
-        new_token = proxmox_token.create(tokenid, userid, comment=comment, privsep=privsep, expire=expire)
+        new_token = proxmox_token.create(
+            tokenid,
+            userid,
+            comment=comment,
+            privsep=privsep,
+            expire=expire)
         module.exit_json(changed=True, tokenid=tokenid, token=new_token['value'], userid=userid, msg="Token {0} for User {1} successfully created".format(tokenid, userid))
     else:
         proxmox_token.delete(tokenid, userid)
         module.exit_json(changed=True, tokenid=tokenid, userid=userid, msg="Token {0} for User {1} successfully deleted".format(tokenid, userid))
 
 if __name__ == '__main__':
+
     main()

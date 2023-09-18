@@ -79,11 +79,11 @@ msg:
     sample: "Group Admin successfully created"
 '''
 
-# from ansible_collections.community.general.plugins.module_utils.proxmox import (ansible_to_proxmox_bool, proxmox_to_ansible_bool)
 from ansible.module_utils.basic import AnsibleModule
 from ansible_collections.cloudcodger.proxmox_openssh.plugins.module_utils.proxmox_openssh import (ProxmoxOpenSSHAnsible, proxmox_openssh_argument_spec)
 
 class ProxmoxOpenSSHGroupAnsible(ProxmoxOpenSSHAnsible):
+
     def get(self, groupid):
         """
         Get group info
@@ -155,6 +155,7 @@ class ProxmoxOpenSSHGroupAnsible(ProxmoxOpenSSHAnsible):
             self.module.fail_json(msg="Failed to delete group with ID {0}: {1}".format(groupid, e))
 
 def main():
+
     module_args = proxmox_openssh_argument_spec()
     group_args = dict(
         groupid=dict(type='str', aliases=['group', 'name'], required=True),
@@ -181,4 +182,5 @@ def main():
         module.exit_json(changed=True, groupid=groupid, msg="Group {0} successfully deleted".format(groupid))
 
 if __name__ == '__main__':
+
     main()

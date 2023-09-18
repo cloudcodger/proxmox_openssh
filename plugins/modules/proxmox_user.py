@@ -94,6 +94,7 @@ from ansible.module_utils.basic import AnsibleModule
 from ansible_collections.cloudcodger.proxmox_openssh.plugins.module_utils.proxmox_openssh import (ProxmoxOpenSSHAnsible, proxmox_openssh_argument_spec)
 
 class ProxmoxOpenSSHUserAnsible(ProxmoxOpenSSHAnsible):
+
     def get(self, userid):
         """
         Get user info
@@ -167,6 +168,7 @@ class ProxmoxOpenSSHUserAnsible(ProxmoxOpenSSHAnsible):
             self.module.fail_json(msg="Failed to delete user with ID {0}: {1}".format(userid, e))
 
 def main():
+
     module_args = proxmox_openssh_argument_spec()
     user_args = dict(
         userid=dict(type='str', aliases=['user', 'name'], required=True),
@@ -201,4 +203,5 @@ def main():
         module.exit_json(changed=True, userid=userid, msg="User {0} successfully deleted".format(userid))
 
 if __name__ == '__main__':
+
     main()
