@@ -1,5 +1,9 @@
 # Change log
 
+# version 1.0.3
+
+- Removed no longer supported `get_md5`.
+
 # version 1.0.2
 
 - Fixed `proxmox_ve` wait for file that had a hard coded value.
