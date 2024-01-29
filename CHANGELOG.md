@@ -1,5 +1,9 @@
 # Change log
 
+# version 1.1.0
+
+- Added the `proxmox_snippet` role.
+
 # version 1.0.3
 
 - Removed no longer supported `get_md5`.

@@ -1,5 +1,5 @@
-`proxmox_datacenter`
-=========
+The `proxmox_datacenter` role
+=============================
 
 Configure a Proxmox Datacenter by doing the following tasks.
 
@@ -69,7 +69,7 @@ Example Playbook
 
 An example of how to use the role.
 
-```
+```yaml
 ---
 - name: Configure the Proxmox Datacenter.
   hosts: localhost

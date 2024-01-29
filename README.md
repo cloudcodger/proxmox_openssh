@@ -31,6 +31,12 @@ Called on `localhost` and uses the `proxmoxer` Python module and its `openssh` b
 
 This role makes use of the various Ansible modules in the collection to perform these tasks with the exception of clustering. The Proxmox CLI command `pvecm` supports the ability to join cluster nodes via SSH but this ability was not found in the Proxmox API calls. So this configuration is performed using the CLI commands to avoid having to deal with `root` user passwords in the calls.
 
+## `proxmox_snippet`
+
+Called on one or more inventory hosts that have Proxmox VE installed. Creates a snippet file.
+
+By default, the snippets created using this module are placed in the `configs` storage pool created by the `proxmox_ve` role. This role does not create the storage pool or configure it to support snippets content.
+
 # Modules
 
 The modules included in this collection all use the Python [`proxmoxer`](https://proxmoxer.github.io/docs/2.0/) module and the `openssh` backend (connection method). This allows for use of passwordless SSH connections using preconfigured SSH key pairs. The same SSH keys used for Ansible to connect to hosts.

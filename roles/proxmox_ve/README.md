@@ -1,5 +1,5 @@
-`proxmox_ve`
-=========
+The `proxmox_ve` role
+=====================
 
 Proxmox virtual environment host configurator.
 
