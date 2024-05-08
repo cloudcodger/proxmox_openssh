@@ -1,5 +1,9 @@
 # Change log
 
+# version 1.2.0
+
+- Added port and sudo to the proxmoxer ssh connections in `proxmox_opsnssh.py` module util. - Rina-Y
+
 # version 1.1.0
 
 - Added the `proxmox_snippet` role.
