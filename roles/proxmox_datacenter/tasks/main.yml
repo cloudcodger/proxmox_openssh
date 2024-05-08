@@ -12,6 +12,8 @@
   cloudcodger.proxmox_openssh.proxmox_storage_dir:
     api_host: "{{ item }}"
     api_user: "{{ proxmox_api_user }}"
+    api_port: "{{ proxmox_api_port }}"
+    api_sudo: "{{ proxmox_api_sudo }}"
     content: "images,iso,vztmpl,backup"
     path: "/var/lib/vz"
     storageid: "local"
@@ -21,6 +23,8 @@
   cloudcodger.proxmox_openssh.proxmox_storage_dir:
     api_host: "{{ item }}"
     api_user: "{{ proxmox_api_user }}"
+    api_port: "{{ proxmox_api_port }}"
+    api_sudo: "{{ proxmox_api_sudo }}"
     content: "snippets"
     path: "/etc/pve/configs"
     shared: true

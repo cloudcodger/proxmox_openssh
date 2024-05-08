@@ -3,6 +3,8 @@
   cloudcodger.proxmox_openssh.proxmox_group:
     api_host: "{{ loop_api_host }}"
     api_user: "{{ proxmox_api_user }}"
+    api_port: "{{ proxmox_api_port }}"
+    api_sudo: "{{ proxmox_api_sudo }}"
     group: "{{ item }}"
     state: present
   loop: "{{ datacenter_groups }}"
@@ -11,6 +13,8 @@
   cloudcodger.proxmox_openssh.proxmox_user:
     api_host: "{{ loop_api_host }}"
     api_user: "{{ proxmox_api_user }}"
+    api_port: "{{ proxmox_api_port }}"
+    api_sudo: "{{ proxmox_api_sudo }}"
     userid: "{{ item }}"
     groups: "{{ omit if not datacenter_users_groups
       else datacenter_users_groups | join(', ') }}"
@@ -21,6 +25,8 @@
   cloudcodger.proxmox_openssh.proxmox_token:
     api_host: "{{ loop_api_host }}"
     api_user: "{{ proxmox_api_user }}"
+    api_port: "{{ proxmox_api_port }}"
+    api_sudo: "{{ proxmox_api_sudo }}"
     userid: "{{ item.split('!') | first }}"
     tokenid: "{{ item.split('!') | last }}"
     state: present
@@ -44,6 +50,8 @@
   cloudcodger.proxmox_openssh.proxmox_acl:
     api_host: "{{ loop_api_host }}"
     api_user: "{{ proxmox_api_user }}"
+    api_port: "{{ proxmox_api_port }}"
+    api_sudo: "{{ proxmox_api_sudo }}"
     path: '/'
     roleid: 'Administrator'
     groups: "{{ ','.join(datacenter_groups) }}"

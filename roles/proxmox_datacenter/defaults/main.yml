@@ -9,6 +9,10 @@ proxmox_api_host: 'pve.example.com'
 # User for Proxmox API access to all API hosts above.
 proxmox_api_user: 'root'
 
+# Additional SSH options.
+proxmox_api_port: 22
+proxmox_api_sudo: false
+
 # All groups will have recursive permissions created
 # for path `/` and the `Administrator` role.
 datacenter_groups: "{{ datacenter_users_groups }}"
