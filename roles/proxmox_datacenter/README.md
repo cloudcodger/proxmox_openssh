@@ -42,9 +42,13 @@ Role Variables
     - a resolvable hostname
     - an IP address
     - a list of a mixture of the above two values
+- `proxmox_api_port` - (default: `22`)
+  - What SSH port will be used in the case that `proxmox_api_host` is not using default ports.
 - `proxmox_api_user` - (default: `root`)
   - The user for `proxmoxer` connection to each API host.
   - Ansible must have passwordless SSH connectivity to each API host or tasks will fail.
+- `proxmox_api_sudo` - (default: `false`)
+  - Whether `proxmoxer` connection will use sudo. Possibly needed when `proxmox_api_user` is not root.
 - `datacenter_groups` - (default: value of `datacenter_users_groups`)
   - A list of group to create and given permissions to the `Administrator` role.
   - Do not use this to create groups for which you do not want these permissions added.

@@ -28,6 +28,12 @@ def proxmox_openssh_argument_spec():
         api_user=dict(type='str',
                       required=True
                       ),
+        api_port=dict(type='int',
+                      default=22
+                      ),
+        api_sudo=dict(type='bool',
+                      default=False
+                      ),
     )
 
 # Extending the ProxmoxAnsible class and override _connect so that proxmoxer uses openssh backend
@@ -37,8 +43,10 @@ class ProxmoxOpenSSHAnsible(ProxmoxAnsible):
     def _connect(self):
         api_host = self.module.params['api_host']
         api_user = self.module.params['api_user']
+        api_port = self.module.params['api_port']
+        api_sudo = self.module.params['api_sudo']
 
-        auth_args = {'user': api_user, 'backend': 'openssh'}
+        auth_args = {'user': api_user, 'port': api_port, 'sudo': api_sudo, 'backend': 'openssh'}
 
         try:
             return ProxmoxAPI(api_host, **auth_args)
