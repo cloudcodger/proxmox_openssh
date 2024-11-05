@@ -1,5 +1,9 @@
 # Change log
 
+# version 1.2.1
+
+- Fix to prevent `proxmox_ve` from removing sym-link to `authorized_keys` for `root` user.
+
 # version 1.2.0
 
 - Added port and sudo to the proxmoxer ssh connections in `proxmox_opsnssh.py` module util. - Rina-Y

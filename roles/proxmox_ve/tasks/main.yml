@@ -43,6 +43,7 @@
 - name: Add authorized_keys for root user.
   ansible.posix.authorized_key:
     user: 'root'
+    follow: true
     key: "{{ item }}"
     state: present
   loop: "{{ proxmox_host_authorized_keys }}"
