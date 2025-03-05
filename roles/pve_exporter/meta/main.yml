@@ -1,11 +1,10 @@
----
 galaxy_info:
   author: Cloud Codger
-  description: Proxmox VE Initial configuration with clustering
+  description: Prometheus exporter for Proxmox VE hosts
 
   license: GPL-2.0-or-later
 
-  min_ansible_version: '2.15'
+  min_ansible_version: '2.50'
 
   galaxy_tags:
     - cluster

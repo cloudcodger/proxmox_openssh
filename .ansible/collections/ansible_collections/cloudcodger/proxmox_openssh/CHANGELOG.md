@@ -1,10 +1,5 @@
 # Change log
 
-# version 1.3.1
-
-- Added the `pve_exporter` role.
-- Minor README.md file changes.
-
 # version 1.2.1
 
 - Fix to prevent `proxmox_ve` from removing sym-link to `authorized_keys` for `root` user.

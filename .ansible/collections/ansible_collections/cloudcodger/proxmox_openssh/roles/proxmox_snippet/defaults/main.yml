@@ -1,0 +1,5 @@
+---
+# defaults file for proxmox_snippet
+proxmox_snippet_contents: ""
+proxmox_snippet_name: vendor-data.yml
+proxmox_snippet_path: /etc/pve/configs/snippets

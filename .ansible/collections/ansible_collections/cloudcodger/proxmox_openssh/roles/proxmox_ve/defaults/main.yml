@@ -1,0 +1,15 @@
+---
+# defaults file for proxmox_ve
+
+cloud_init_image_files: []
+cluster_name: ''
+enterprise_license: false
+
+# List of SSH keys to add or remove from the `authorized_keys` file for `root`.
+proxmox_host_authorized_keys: []
+proxmox_host_deauthorized_keys: []
+
+pve_apt_enterprise_url: 'https://enterprise.proxmox.com/debian/pve'
+pve_apt_no_sub_url: 'http://download.proxmox.com/debian/pve'
+pve_apt_ceph_enterprise_url: 'https://enterprise.proxmox.com/debian/ceph-quincy'
+pve_apt_ceph_no_sub_url: 'http://download.proxmox.com/debian/ceph-quincy'

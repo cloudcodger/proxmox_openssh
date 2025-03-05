@@ -1,0 +1,6 @@
+---
+- name: Restart prometheus-pve-exporter
+  ansible.builtin.service:
+    name: prometheus-pve-exporter
+    daemon_reload: true
+    state: restarted

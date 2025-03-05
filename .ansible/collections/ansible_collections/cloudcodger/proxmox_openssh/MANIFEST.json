@@ -1,0 +1,37 @@
+{
+ "collection_info": {
+  "namespace": "cloudcodger",
+  "name": "proxmox_openssh",
+  "version": "1.3.1",
+  "authors": [
+   "Cloud Codger <cloudcodger@pm.me>"
+  ],
+  "readme": "README.md",
+  "tags": [
+   "cluster",
+   "hypervisor",
+   "infrastructure",
+   "proxmox",
+   "pve",
+   "virtualization"
+  ],
+  "description": "Proxmox Cluster via openssh",
+  "license": [
+   "GPL-2.0-or-later"
+  ],
+  "license_file": null,
+  "dependencies": {},
+  "repository": "https://github.com/cloudcodger/proxmox_openssh",
+  "documentation": "https://github.com/cloudcodger/proxmox_openssh",
+  "homepage": "https://github.com/cloudcodger/proxmox_openssh",
+  "issues": "https://github.com/cloudcodger/proxmox_openssh/issues"
+ },
+ "file_manifest_file": {
+  "name": "FILES.json",
+  "ftype": "file",
+  "chksum_type": "sha256",
+  "chksum_sha256": "eb0199f6a28e43ee9f68452ef93139eb5c03dff2e4418ef7ced2fc825dd6c2b8",
+  "format": 1
+ },
+ "format": 1
+}

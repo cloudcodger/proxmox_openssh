@@ -1,0 +1,16 @@
+---
+pve_exporter_api_host: ""
+pve_exporter_api_port: 22
+pve_exporter_api_sudo: false
+pve_exporter_api_user: root
+pve_exporter_config_directory: /etc/prometheus
+pve_exporter_config_file: pve.yml
+pve_exporter_datacenter_token_name: prometheus
+pve_exporter_datacenter_token_secret: ""
+pve_exporter_datacenter_user: exporter@pve
+pve_exporter_datacenter_verify_ssl: "false"
+pve_exporter_directory: /opt/prometheus-pve-exporter
+pve_exporter_token_secret_prefix: ""
+pve_exporter_token_secret_suffix: ""
+pve_exporter_token_secrets_dir: "{{ lookup('env', 'HOME') }}/.pve_tokens"
+pve_exporter_user: pve-exporter
