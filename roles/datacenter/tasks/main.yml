@@ -1,0 +1,93 @@
+---
+- name: Create the token secrets directory on control host.
+  ansible.builtin.file:
+    path: "{{ datacenter_token_secrets_dir }}"
+    state: directory
+    mode: '0700'
+  when: datacenter_administrator_tokens or datacenter_auditor_tokens
+
+- name: Update storage "local" allowed content.
+  cloudcodger.proxmox_openssh.proxmox_storage_dir:
+    api_host: "{{ datacenter_pm_api_host }}"
+    api_user: root
+    content: "{{ datacenter_local_storage_content }}"
+    path: "/var/lib/vz"
+    storageid: "local"
+
+- name: Create storage "configs" and allow images content (Corosync limits apply).
+  cloudcodger.proxmox_openssh.proxmox_storage_dir:
+    api_host: "{{ datacenter_pm_api_host }}"
+    api_user: "{{ datacenter_pm_api_user }}"
+    content: "snippets"
+    path: "/etc/pve/configs"
+    shared: true
+    storageid: "configs"
+  when: datacenter_add_configs_storage is true
+
+- name: Create Administrator and Auditor groups.
+  cloudcodger.proxmox_openssh.proxmox_group:
+    api_host: "{{ datacenter_pm_api_host }}"
+    api_user: "{{ datacenter_pm_api_user }}"
+    group: "{{ item }}"
+  loop: "{{ datacenter_administrator_groups + datacenter_auditor_groups }}"
+
+- name: Create Administrator token users.
+  cloudcodger.proxmox_openssh.proxmox_user:
+    api_host: "{{ datacenter_pm_api_host }}"
+    api_user: "{{ datacenter_pm_api_user }}"
+    groups: "{{ datacenter_administrator_groups | first }}"
+    userid: "{{ item.split('!')[0] }}"
+  loop: "{{ datacenter_administrator_tokens }}"
+  loop_control:
+    label: "{{ item.split('!')[0] }}"
+
+- name: Create Auditor token users.
+  cloudcodger.proxmox_openssh.proxmox_user:
+    api_host: "{{ datacenter_pm_api_host }}"
+    api_user: "{{ datacenter_pm_api_user }}"
+    groups: "{{ datacenter_auditor_groups | first }}"
+    userid: "{{ item.split('!')[0] }}"
+  loop: "{{ datacenter_auditor_tokens }}"
+  loop_control:
+    label: "{{ item.split('!')[0] }}"
+
+- name: Create Administrator tokens.
+  cloudcodger.proxmox_openssh.proxmox_token:
+    api_host: "{{ datacenter_pm_api_host }}"
+    api_user: "{{ datacenter_pm_api_user }}"
+    tokenid: "{{ item.split('!')[1] }}"
+    userid: "{{ item.split('!')[0] }}"
+  loop: "{{ datacenter_administrator_tokens }}"
+  notify: Store new datacenter administrator token secrets
+  register: datacenter_administrator_proxmox_tokens
+
+- name: Create Auditor tokens.
+  cloudcodger.proxmox_openssh.proxmox_token:
+    api_host: "{{ datacenter_pm_api_host }}"
+    api_user: "{{ datacenter_pm_api_user }}"
+    tokenid: "{{ item.split('!')[1] }}"
+    userid: "{{ item.split('!')[0] }}"
+  loop: "{{ datacenter_auditor_tokens }}"
+  notify: Store new datacenter auditor token secrets
+  register: datacenter_auditor_proxmox_tokens
+
+- name: Flush handlers.
+  ansible.builtin.meta: flush_handlers
+
+- name: Create the ACLs for Administrator groups and tokens.
+  cloudcodger.proxmox_openssh.proxmox_acl:
+    api_host: "{{ datacenter_pm_api_host }}"
+    api_user: "{{ datacenter_pm_api_user }}"
+    path: /
+    roleid: Administrator
+    groups: "{{ ','.join(datacenter_administrator_groups) }}"
+    tokens: "{{ ','.join(datacenter_administrator_tokens) }}"
+
+- name: Create the ACLs for Auditor groups and tokens.
+  cloudcodger.proxmox_openssh.proxmox_acl:
+    api_host: "{{ datacenter_pm_api_host }}"
+    api_user: "{{ datacenter_pm_api_user }}"
+    path: /
+    roleid: PVEAuditor
+    groups: "{{ ','.join(datacenter_auditor_groups) }}"
+    tokens: "{{ ','.join(datacenter_auditor_tokens) }}"

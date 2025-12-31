@@ -1,0 +1,14 @@
+---
+datacenter_pm_api_host: pve
+datacenter_pm_api_user: root
+
+datacenter_add_configs_storage: true
+datacenter_administrator_groups: [Admin]
+datacenter_administrator_tokens: ['devops@pve!ansible']
+datacenter_auditor_groups: [Auditor]
+datacenter_auditor_tokens: ['devops@pve!inventory', 'exporter@pve!prometheus']
+datacenter_local_storage_content: images,iso,vztmpl,backup
+
+datacenter_token_secrets_dir: "{{ lookup('env', 'HOME') }}/.pve_tokens"
+datacenter_token_secret_name_prefix: ""
+datacenter_token_secret_name_suffix: ""

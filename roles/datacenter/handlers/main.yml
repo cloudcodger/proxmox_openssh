@@ -1,0 +1,24 @@
+---
+- name: Store new datacenter administrator token secrets
+  ansible.builtin.copy:
+    content: "{{ item.token }}\n"
+    dest: "{{ datacenter_token_secrets_dir }}/{{ datacenter_token_secret_name_prefix
+      }}{{ item.userid | replace('@', '-') }}-{{ item.tokenid
+      }}{{ datacenter_token_secret_name_suffix }}.token"
+    mode: "0600"
+  loop: "{{ datacenter_administrator_proxmox_tokens.results }}"
+  loop_control:
+    label: "{{ item.userid }}!{{ item.tokenid }}"
+  when: item.changed
+
+- name: Store new datacenter auditor token secrets
+  ansible.builtin.copy:
+    content: "{{ item.token }}\n"
+    dest: "{{ datacenter_token_secrets_dir }}/{{ datacenter_token_secret_name_prefix
+      }}{{ item.userid | replace('@', '-') }}-{{ item.tokenid
+      }}{{ datacenter_token_secret_name_suffix }}.token"
+    mode: "0600"
+  loop: "{{ datacenter_auditor_proxmox_tokens.results }}"
+  loop_control:
+    label: "{{ item.userid }}!{{ item.tokenid }}"
+  when: item.changed

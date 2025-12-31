@@ -1,5 +1,17 @@
 # Change log
 
+# version 2.0.0
+
+### Fully breaking changes
+
+- Removed `proxmox_ve` role.
+  Created a new [`proxmox_ve`](https://github.com/cloudcodger/proxmox_ve) collection for everything this role did.
+- Replaced `proxmox_datacenter` role with the `datacenter` role.
+  The new role has different variable naming to pass linting.
+- Removed `proxmox_snippet` role. This was more of a showcase on how to do this and not a good role.
+- Removed the `pve_exporter` role. Moved to the new `proxmox_ve` collection.
+  The new `datacenter` role creates an `Auditor` group and an auditor token `exporter@pve!prometheus` for use by the role. The other tasks did not belong with the openssh items here.
+
 # version 1.3.1
 
 - Added the `pve_exporter` role.

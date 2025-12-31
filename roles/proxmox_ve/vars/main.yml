@@ -1,3 +1,0 @@
----
-# vars file for proxmox_ve
-create_cluster: "{{ cluster_name | length > 0 }}"
