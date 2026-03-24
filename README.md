@@ -6,11 +6,11 @@ Provides a role and modules for managing a PVE Datacenter using the Python `prox
 
 The;
 
-- [Proxmox Inventory Source](https://docs.ansible.com/projects/ansible/latest/collections/community/general/proxmox_inventory.html)
-- [`community.general.proxmox_kvm`](https://docs.ansible.com/ansible/latest/collections/community/general/proxmox_kvm_module.html) module
-- [`community.general.proxmox`](https://docs.ansible.com/ansible/latest/collections/community/general/proxmox_module.html) module
+- [Proxmox Inventory Source](https://docs.ansible.com/projects/ansible/latest/collections/community/proxmox/proxmox_inventory.html)
+- [`community.proxmox.proxmox_kvm`](https://docs.ansible.com/ansible/latest/collections/community/proxmox/proxmox_kvm_module.html) module
+- [`community.proxmox.proxmox`](https://docs.ansible.com/ansible/latest/collections/community/proxmox/proxmox_module.html) module
 
-all use the Python `proxmoxer` module with the `HTTPS` backend, this requires, either figuring out a secure way of dealing with an `api_password`, or creating an `api_token_id` and associated `api_token_secret`. The need exists for a set of modules that can create these tokens and secrets. Each token is associated with a user and following the best practice of putting users in groups and placing ACLs on the groups, the `datacenter` role creates the group(s), user(s) and token(s) for use by those other modules.
+all use the Python `proxmoxer` module with the `HTTPS` backend. This requires, either figuring out a secure way of dealing with an `api_password`, or creating an `api_token_id` and associated `api_token_secret`. The need exists for a set of modules that can create these tokens and secrets before they exist. Each token is associated with a user and following the best practice of putting users in groups and placing ACLs on the groups, the `datacenter` role creates the group(s), user(s) and token(s) for use by those other modules.
 
 # Requirements
 
@@ -47,7 +47,7 @@ The modules included in this collection all use the Python [`proxmoxer`](https:/
 
 Items in this collection are designed to make it easier to use the Cloud-Init capability built into Proxmox.
 
-When starting with Proxmox, a common approach is to start something like this in the UI.
+When starting with Proxmox, a common approach is to start using the UI and doing something like.
 
 - Find an ISO image for the desired OS and download it
 - Upload that ISO to a storage location in Proxmox
@@ -62,6 +62,6 @@ Learning how to `clone` VMs leads to learning how to turn a VM into a template a
 
 Next is learning how to create VMs using a [Cloud-Init](https://cloudinit.readthedocs.io/en/latest/) image that was specifically created to allow cloud providers to configure virtual machines using multiple init scripts.
 
-This collection helps set up a Proxmox datacent with items for Cloud-Init by changing the `local` storage to include the `images` content type and optionally creating a new `configs` storage allowing `snippets` content type that can be used for `user_data` configuration files. See the [cloudcodger.proxmox_ve](https://github.com/cloudcodger/proxmox_ve) collection for additional roles related to Cloud-Init usage.
+This collection helps set up a Proxmox datacent with items for Cloud-Init by changing the `local` storage to include the `import` content type and optionally creating a new `configs` storage allowing `snippets` content type that can be used for `user_data` configuration files. See the [cloudcodger.proxmox_ve](https://github.com/cloudcodger/proxmox_ve) collection for additional roles related to Cloud-Init usage.
 
 **CAUTION:** The `configs` storage is type `Directory` at `/etc/pve/configs` synced to all cluster nodes via Corosync. Do to limitations in Corosync on the number of files and their sizes, only use this for small snippet files. Like the Cloud-Init user data configuration files (`snippets`). This provides a nice place to put any custom Cloud-Init User Config YAML files.

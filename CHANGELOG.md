@@ -1,14 +1,20 @@
 # Change log
 
+# version 3.0.0
+
+- Updated to use the `community.proxmox` collection instead of the now deprecated Proxmox modules that have been removed from `community.general`.
+- Changed the default of `datacenter_local_storage_content` to include `import` instead of `images`.
+- Set `datacenter_add_configs_storage` default value to `false`. This has possibly caused issues when upgrading Proxmox VE versions. Having this located under `/etc/pve` may be causing an issue. The task was left in the role for those that want to use it but it would be better to add snippets to some other shared storage.
+
 # version 2.0.0
 
 ### Fully breaking changes
 
-- Removed `proxmox_ve` role.
+- Removed the `proxmox_ve` role.
   Created a new [`proxmox_ve`](https://github.com/cloudcodger/proxmox_ve) collection for everything this role did.
-- Replaced `proxmox_datacenter` role with the `datacenter` role.
+- Replaced the `proxmox_datacenter` role with the `datacenter` role.
   The new role has different variable naming to pass linting.
-- Removed `proxmox_snippet` role. This was more of a showcase on how to do this and not a good role.
+- Removed the `proxmox_snippet` role. This was more of a showcase on how to do this and not a good role.
 - Removed the `pve_exporter` role. Moved to the new `proxmox_ve` collection.
   The new `datacenter` role creates an `Auditor` group and an auditor token `exporter@pve!prometheus` for use by the role. The other tasks did not belong with the openssh items here.
 

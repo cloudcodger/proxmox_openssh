@@ -4,7 +4,7 @@
     path: "{{ datacenter_token_secrets_dir }}"
     state: directory
     mode: '0700'
-  when: datacenter_administrator_tokens or datacenter_auditor_tokens
+  when: (datacenter_administrator_tokens + datacenter_auditor_tokens) | length > 0
 
 - name: Update storage "local" allowed content.
   cloudcodger.proxmox_openssh.proxmox_storage_dir:
@@ -70,9 +70,6 @@
   loop: "{{ datacenter_auditor_tokens }}"
   notify: Store new datacenter auditor token secrets
   register: datacenter_auditor_proxmox_tokens
-
-- name: Flush handlers.
-  ansible.builtin.meta: flush_handlers
 
 - name: Create the ACLs for Administrator groups and tokens.
   cloudcodger.proxmox_openssh.proxmox_acl:

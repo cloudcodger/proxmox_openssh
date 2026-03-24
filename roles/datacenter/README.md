@@ -49,9 +49,9 @@ By default, this role creates an API token (`devops@pve!ansible`) that will have
 
 - `datacenter_local_storage_content`
   - String assigned to the `local` storage for allowed content.
-  - Default: `images,iso,vztmpl,backup`
+  - Default: `import,iso,vztmpl,backup`
   - Needed in order to use this storage for clound-init images that can be used with `import-from` when creating a VM.
-  - A new Proxmox datacenter will have `iso,vztmpl,backup` for the allowed content. Override the default value if desired.
+  - A new Proxmox datacenter will have only `iso,vztmpl,backup` for the allowed content.
 
 - `datacenter_pm_api_host`
   - The host for all Proxmox API calls.
