@@ -1,7 +1,7 @@
 ---
 namespace: cloudcodger
 name: proxmox_openssh
-version: 3.0.0
+version: 3.0.1
 readme: README.md
 authors:
   - Cloud Codger <cloudcodger@pm.me>

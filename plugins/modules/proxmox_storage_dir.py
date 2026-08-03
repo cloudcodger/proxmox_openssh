@@ -106,8 +106,42 @@ msg:
 
 from ansible.module_utils.basic import AnsibleModule
 from ansible_collections.cloudcodger.proxmox_openssh.plugins.module_utils.proxmox_openssh import (ProxmoxOpenSSHAnsible, proxmox_openssh_argument_spec)
+import inspect
 
 class ProxmoxOpenSSHStorageDirectoryAnsible(ProxmoxOpenSSHAnsible):
+
+    # def __init__(self, external_module_instance):
+    #     # Store the external object internally
+    #     self._target = external_module_instance
+
+    def _get_storages_compat(self, **kwargs):
+        """
+        Internal helper to call get_storages() with backward compatibility.
+        Handles the 'type' -> 'storagetype' parameter rename.
+        """
+        func = self.get_storages
+
+        # 1. Inspect the external method's signature
+        try:
+            sig = inspect.signature(func)
+            param_names = set(sig.parameters.keys())
+        except (ValueError, TypeError):
+            param_names = set()
+
+        # 2. Adapt arguments
+        final_kwargs = {}
+        for key, value in kwargs.items():
+            if key == 'type':
+                # Map 'type' to 'storagetype' if the new version expects it
+                if 'storagetype' in param_names:
+                    final_kwargs['storagetype'] = value
+                else:
+                    final_kwargs['type'] = value
+            else:
+                final_kwargs[key] = value
+
+        # 3. Call the external method
+        return func(**final_kwargs)
 
     def get(self, storageid):
         """
@@ -128,7 +162,7 @@ class ProxmoxOpenSSHStorageDirectoryAnsible(ProxmoxOpenSSHAnsible):
         :param storageid: str - name of the directory type storage
         :return: bool - if the storage exists
         """
-        for storage in self.get_storages(type='dir'):
+        for storage in self._get_storages_compat(type='dir'):
             if storage['storage'] == storageid:
                 return True
         return False

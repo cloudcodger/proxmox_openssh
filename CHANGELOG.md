@@ -1,5 +1,9 @@
 # Change log
 
+# version 3.0.1
+
+- Updated `plugins/modules/proxmox_storage_dir.py` to work with `community.proxmox` v2.0.0 that changed a parameter on `get_storages`.
+
 # version 3.0.0
 
 - Updated to use the `community.proxmox` collection instead of the now deprecated Proxmox modules that have been removed from `community.general`.
